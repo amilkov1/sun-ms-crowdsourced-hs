@@ -7,7 +7,7 @@
 {-#LANGUAGE FlexibleContexts#-}
 {-#LANGUAGE QuasiQuotes#-}
 
-module API.CheckinHazard
+module Handlers.CheckinHazard
 (
   uaGetHazardCheckinHandler
 )
@@ -26,13 +26,17 @@ import Data.Functor.Identity
 import Types.HazardCheckin (HazardCheckin)
 import Control.Applicative (pure)
 import Data.String as S
+import Data.ByteString.Lazy (ByteString(..))
+--import Control.Exception (show)
 
 --uaGetHazardCheckinHandler :: Server UaGetHazardCheckin
 uaGetHazardCheckinHandler :: Geohash -> Handler [HazardCheckin]
 uaGetHazardCheckinHandler gh = ExceptT (do
   hsE <- runExceptT $ runCassQ $ readHazardsByGeohash (repr gh)
   case hsE of
-    Left e -> return $ Left err500 {errBody = "Unable to retrieve hazards with"}
+    Left e -> do
+      let s = read $ "Unable to retrieve hazards with" ++ (show e) :: ByteString
+      return $ Left err500 {errBody = s}
     Right hs -> return $ Right hs )
 
 readHazardsByGeohash :: MonadClient m => Text -> m [HazardCheckin]

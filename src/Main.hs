@@ -9,7 +9,7 @@ module Main where
 
 import Lib
 import API
-import API.CheckinHazard (uaGetHazardCheckinHandler)
+import Handlers.CheckinHazard (uaGetHazardCheckinHandler)
 --import Lib(CrowdsourcedResp(CrowdsourcedResp(..)))
 import Data.Time.LocalTime
 import qualified Data.Map as M
@@ -47,8 +47,6 @@ authHandler =
         Nothing -> throwError (err401 {errBody = "Missing dsx cookie"})
         Just dsxCookie -> CrowdsourcedResp {code = 200, body = "Dope"}
   in mkAuthHandler handler -}
-
-instance ToJSON Position
 
 type AnAPI = UaGetHazardCheckin
 
